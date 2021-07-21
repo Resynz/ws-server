@@ -13,15 +13,16 @@ import (
 // SendMsg 发送消息
 func SendMsg(ctx *common.Context) {
 	type formValidate struct {
-		MsgList    []string `form:"msg_list" binding:"required" json:"msg_list"`
-		UserIdList []string `form:"user_id_list" binding:"required" json:"user_id_list"`
+		MsgList      []string `form:"msg_list" binding:"required" json:"msg_list"`
+		UserIdList   []string `form:"user_id_list" binding:"required" json:"user_id_list"`
+		ClientIdList []string `form:"client_id_list" binding:"" json:"client_id_list"`
 	}
 	var form formValidate
 	if err := ctx.ShouldBind(&form); err != nil {
 		common.HandleResponse(ctx, code.InvalidParams, nil, err.Error())
 		return
 	}
-	SendMsgsToUsers(form.UserIdList, form.MsgList)
+	SendMsgsToUsers(form.UserIdList, form.MsgList, form.ClientIdList)
 	data := map[string]bool{
 		"result": true,
 	}
@@ -40,7 +41,7 @@ func Broadcast(ctx *common.Context) {
 	}
 	users := config.ClientMap.Keys()
 	if len(users) > 0 {
-		SendMsgsToUsers(users, form.MsgList)
+		SendMsgsToUsers(users, form.MsgList, nil)
 	}
 	data := map[string]bool{
 		"result": true,
