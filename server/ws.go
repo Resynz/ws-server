@@ -80,6 +80,9 @@ func Handler(ws *websocket.Conn) {
 			logger.Logger.Errorf("用户[%s]数据接收失败！error:%s", client.UserId, err)
 			break
 		}
+		if msg == "ping" {
+			_ = websocket.Message.Send(client.Conn, "pong")
+		}
 	}
 }
 
