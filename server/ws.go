@@ -45,15 +45,15 @@ func putToClientMap(c *config.Client) {
 func removeFromClientMap(client *config.Client) {
 	client.Conn.Close()
 	clients := config.ClientMap.Read(client.UserId)
-	var index int
-	for i, v := range clients {
-		if v == client {
-			index = i
+	newClients := make([]*config.Client, 0)
+	for _, v := range clients {
+		if v.ClientId == client.ClientId {
+			continue
 		}
+		newClients = append(newClients, v)
 	}
-	clients = append(clients[:index], clients[index+1:]...)
-	if len(clients) > 0 {
-		config.ClientMap.Write(client.UserId, clients)
+	if len(newClients) > 0 {
+		config.ClientMap.Write(client.UserId, newClients)
 		return
 	}
 	config.ClientMap.Delete(client.UserId)
