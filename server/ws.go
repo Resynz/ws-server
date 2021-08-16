@@ -42,7 +42,7 @@ func putToClientMap(c *config.Client) {
 	config.ClientMap.Write(c.UserId, cons)
 }
 
-func removeFromClientMap(client *config.Client) {
+func RemoveFromClientMap(client *config.Client) {
 	client.Conn.Close()
 	clients := config.ClientMap.Read(client.UserId)
 	newClients := make([]*config.Client, 0)
@@ -69,7 +69,7 @@ func Handler(ws *websocket.Conn) {
 		CreateTime: time.Now().Unix(),
 	}
 	putToClientMap(client)
-	defer removeFromClientMap(client)
+	defer RemoveFromClientMap(client)
 	for {
 		var msg string
 		err := websocket.Message.Receive(ws, &msg)

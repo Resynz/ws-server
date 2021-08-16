@@ -33,6 +33,7 @@ func StartServer() {
 	apiGroup.GET("/is-online", common.AuthDetection(api.IsOnline))
 	apiGroup.GET("/online-users", common.AuthDetection(api.OnlineUsers))
 	apiGroup.GET("/info", common.AuthDetection(api.UserInfo))
+	apiGroup.GET("/offline", common.AuthDetection(api.Offline))
 
 	if err := app.Run(fmt.Sprintf(":%d", config.Conf.AppPort)); err != nil {
 		log.Fatalf("start server failed! error:%s\n", err.Error())

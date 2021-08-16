@@ -8,6 +8,7 @@ import (
 	"ws-server/code"
 	"ws-server/common"
 	"ws-server/config"
+	"ws-server/server"
 )
 
 // GetOnlineCount 获取在线人数
@@ -85,6 +86,32 @@ func UserInfo(ctx *common.Context) {
 	}
 	data := map[string]interface{}{
 		"info": info,
+	}
+	common.HandleResponse(ctx, code.SuccessCode, data)
+}
+
+// Offline 下线
+func Offline(ctx *common.Context) {
+	type formValidate struct {
+		UserId   string `form:"user_id" binding:"required" json:"user_id"`
+		ClientId string `form:"client_id" binding:"required" json:"client_id"`
+	}
+	var form formValidate
+	if err := ctx.ShouldBind(&form); err != nil {
+		common.HandleResponse(ctx, code.InvalidParams, nil, err.Error())
+		return
+	}
+	if config.ClientMap.Exists(form.UserId) {
+		clients := config.ClientMap.Read(form.UserId)
+		for _, v := range clients {
+			if v.ClientId == form.ClientId {
+				server.RemoveFromClientMap(v)
+				break
+			}
+		}
+	}
+	data := map[string]bool{
+		"result": true,
 	}
 	common.HandleResponse(ctx, code.SuccessCode, data)
 }
